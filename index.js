@@ -17,6 +17,17 @@ const client = new MongoClient(uri, { serverApi: {version: ServerApiVersion.v1, 
 
 async function run(){
     try{
+        await client.connect();
+
+        // all collections
+        const homeCollection = client.db('Laptop-Land').collection('homedata')
+
+        // get home laptop data
+        app.get('/homedata' , async(req, res)=>{
+            const result = await homeCollection.find().toArray();
+            res.send(result);
+        })
+
 
     }
     finally{
