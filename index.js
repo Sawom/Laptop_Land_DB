@@ -20,13 +20,20 @@ async function run(){
         await client.connect();
 
         // all collections
-        const homeCollection = client.db('Laptop-Land').collection('homedata')
+        const homeCollection = client.db('Laptop-Land').collection('homedata');
+        const reviewsCollection = client.db('Laptop-Land').collection('homereview');
 
         // get home laptop data
         app.get('/homedata' , async(req, res)=>{
             const result = await homeCollection.find().toArray();
             res.send(result);
         })
+
+        // get reviews
+        app.get('/homereview' , async(req, res)=>{
+            const result = await reviewsCollection.find().toArray();
+            res.send(result);
+        } )
 
 
     }
