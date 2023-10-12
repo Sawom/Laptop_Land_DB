@@ -22,6 +22,7 @@ async function run(){
         // all collections
         const homeCollection = client.db('Laptop-Land').collection('homedata');
         const reviewsCollection = client.db('Laptop-Land').collection('homereview');
+        const laptopCollection = client.db('Laptop-Land').collection('laptop');
 
         // get home laptop data
         app.get('/homedata' , async(req, res)=>{
@@ -35,6 +36,11 @@ async function run(){
             res.send(result);
         } )
 
+        // get laptops data
+        app.get('/laptop', async(req, res)=>{
+            const result = await laptopCollection.find().toArray();
+            res.send(result);
+        })
 
     }
     finally{
