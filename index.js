@@ -1,10 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config(); 
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
-
 const app = express();
 
 // middleware
@@ -42,12 +40,27 @@ async function run(){
             res.send(result);
         })
 
+        // search
+        app.get('/search/:name', async(req, res)=>{
+            let regex = new RegExp(req.params.name, "i");
+            let result = await laptopCollection.find({name:regex}).toArray();
+            console.log(result);
+            res.send(result);
+        })
+
+        // dynamic route
+        app.get('/laptop/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await laptopCollection.findOne(query);
+            res.send(result);
+        })
+
     }
     finally{
 
     }
 }
-run().catch(console.dir);
 
 app.get('/', (req, res) => {
     res.send('laptop land is running');
@@ -56,3 +69,5 @@ app.get('/', (req, res) => {
 app.listen(port, ()=> {
     console.log(`laptop land server running at ${port}` );
 }) 
+
+run().catch(err => console.log(err));
