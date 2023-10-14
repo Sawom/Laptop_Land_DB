@@ -21,10 +21,31 @@ async function run(){
         const homeCollection = client.db('Laptop-Land').collection('homedata');
         const reviewsCollection = client.db('Laptop-Land').collection('homereview');
         const laptopCollection = client.db('Laptop-Land').collection('laptop');
+        const aboutCollection = client.db('Laptop-Land').collection('about');
+        const faqsCollection = client.db('Laptop-Land').collection('faqs');
+        const termsCollection = client.db('Laptop-Land').collection('terms');
 
         // get home laptop data
         app.get('/homedata' , async(req, res)=>{
             const result = await homeCollection.find().toArray();
+            res.send(result);
+        })
+
+        // get about data
+        app.get('/about', async(req, res)=>{
+            const result = await aboutCollection.find().toArray();
+            res.send(result);
+        })
+
+        // get faqs data
+        app.get('/faqs', async(req, res)=>{
+            const result = await faqsCollection.find().toArray();
+            res.send(result);
+        })
+
+        // get terms data
+        app.get('/terms', async(req, res)=>{
+            const result = await termsCollection.find().toArray();
             res.send(result);
         })
 
