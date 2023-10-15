@@ -63,10 +63,14 @@ async function run(){
 
         // search
         app.get('/search/:name', async(req, res)=>{
-            let regex = new RegExp(req.params.name, "i");
-            let result = await laptopCollection.find({name:regex}).toArray();
-            console.log(result);
-            res.send(result);
+            let result = await laptopCollection.find({
+                "$or":[
+                    {model: { $regex: req.params.name, $options: 'i'}},
+                    {brand: { $regex: req.params.name, $options: 'i' }}
+                ]
+            }).toArray()
+            console.log(result)
+            res.send(result)
         })
 
         // dynamic route
