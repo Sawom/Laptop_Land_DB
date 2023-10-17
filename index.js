@@ -44,6 +44,7 @@ async function run(){
         const faqsCollection = client.db('Laptop-Land').collection('faqs');
         const termsCollection = client.db('Laptop-Land').collection('terms');
         const cartCollection = client.db('Laptop-Land').collection('carts'); 
+        const usersCollection = client.db('Laptop-Land').collection('users');
 
         // post cart data to server
         app.post('/carts', async(req,res)=>{
@@ -51,9 +52,21 @@ async function run(){
             const  result = await cartCollection.insertOne(item);
             res.send(result);
             console.log(item);
-        } )
+        })
 
-        // genjam
+        // post user both email and google
+        app.post('/users', async()=>{
+            const user = req.body;
+            const query = {email:user.email};
+            const existingUser = await usersCollection.findOne(query);
+            console.log( 'existingUser: ', existingUser);
+             if(existingUser){
+                return res.send({ message: 'user already exists!' })
+            }
+            const result = await usersCollection.insertOne(user);
+            req.send(result);
+        })
+
         // get cart data email wise
         app.get('/carts', async(req, res)=>{
             const email = req.query.email;
@@ -70,7 +83,7 @@ async function run(){
         // create jwt token.
         app.post('/jwt', (req,res)=>{
             const user = req.body;
-            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '6h'})
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '12h'})
             res.send({token})
         } )
         
