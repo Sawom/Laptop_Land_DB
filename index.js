@@ -53,18 +53,15 @@ async function run(){
             console.log(item);
         } )
 
+        // genjam
         // get cart data email wise
-        app.get('/carts', verifyJWT, async(req,res)=>{
+        app.get('/carts', async(req, res)=>{
             const email = req.query.email;
             if(!email){
                 res.send([]);
             }
 
-            const decodedEmail = req.decoded.email;
-            if (email !== decodedEmail) {
-                return res.status(403).send({ error: true, message: 'forbidden access' })
-            }
-
+            // email wise cart er data get kortechi
             const query = { email: email };
             const result = await cartCollection.find(query).toArray();
             res.send(result);
@@ -73,7 +70,7 @@ async function run(){
         // create jwt token.
         app.post('/jwt', (req,res)=>{
             const user = req.body;
-            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '12h'})
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '6h'})
             res.send({token})
         } )
         
