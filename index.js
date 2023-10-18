@@ -55,16 +55,16 @@ async function run(){
         })
 
         // post user both email and google
-        app.post('/users', async()=>{
+        app.post('/users', async(req, res)=>{
             const user = req.body;
-            const query = {email:user.email};
+            const query = {email: user.email};
             const existingUser = await usersCollection.findOne(query);
             console.log( 'existingUser: ', existingUser);
              if(existingUser){
                 return res.send({ message: 'user already exists!' })
             }
             const result = await usersCollection.insertOne(user);
-            req.send(result);
+            res.send(result);
         })
 
         // get cart data email wise
