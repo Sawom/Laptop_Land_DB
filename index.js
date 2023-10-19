@@ -46,6 +46,23 @@ async function run(){
         const cartCollection = client.db('Laptop-Land').collection('carts'); 
         const usersCollection = client.db('Laptop-Land').collection('users');
 
+        // verify admin
+        const verifyAdmin = async (req, res, next) =>{
+            const email = req.decoded.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            if(user?.role !== 'admin'){
+                return res.status(403).send({ error: true, message: 'forbidden message' });
+            }
+            next();
+        }
+
+        // get all users
+        app.get('/users', verifyJWT, async(req, res)=>{
+            const result = await usersCollection.find().toArray();
+            res.send(result);
+        } )
+
         // post cart data to server
         app.post('/carts', async(req,res)=>{
             const item = req.body;
