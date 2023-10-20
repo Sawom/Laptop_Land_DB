@@ -58,22 +58,30 @@ async function run(){
         }
 
         // get all users
-        app.get('/users', verifyJWT, async(req, res)=>{
+        app.get('/users', async(req, res)=>{
             const result = await usersCollection.find().toArray();
             res.send(result);
         } )
 
-        // check user admin or not
-        app.get('/users/admin/:email', verifyJWT, async(req, res)=>{
-            const email = req.params.email;
-            if(req.decoded.email !== email){
-                res.send( {admin: false} )
-            }
-            const query = {email : email}
-            const user = await usersCollection.findOne(query);
-            const result = {admin: user?.role === 'admin'}
+        // delete user
+        app.delete('/users/:id', async(req,res) =>{
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await usersCollection.deleteOne(query);
             res.send(result);
-        } )
+        })
+
+        // check user admin or not
+        // app.get('/users/admin/:email', verifyJWT, async(req, res)=>{
+        //     const email = req.params.email;
+        //     if(req.decoded.email !== email){
+        //         res.send( {admin: false} )
+        //     }
+        //     const query = {email : email}
+        //     const user = await usersCollection.findOne(query);
+        //     const result = {admin: user?.role === 'admin'}
+        //     res.send(result);
+        // } )
 
         // make admin
         app.patch('/users/admin/:id', async(req, res)=>{
@@ -84,7 +92,7 @@ async function run(){
                     role: 'admin'
                 },
             }
-            const result = await usersCollection.updateOne(filte, updateDoc);
+            const result = await usersCollection.updateOne(filter, updateDoc);
             res.send(result);
         })
 
