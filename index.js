@@ -47,15 +47,15 @@ async function run(){
         const usersCollection = client.db('Laptop-Land').collection('users');
 
         // verify admin
-        const verifyAdmin = async (req, res, next) =>{
-            const email = req.decoded.email;
-            const query = { email: email };
-            const user = await usersCollection.findOne(query);
-            if(user?.role !== 'admin'){
-                return res.status(403).send({ error: true, message: 'forbidden message' });
-            }
-            next();
-        }
+        // const verifyAdmin = async (req, res, next) =>{
+        //     const email = req.decoded.email;
+        //     const query = { email: email };
+        //     const user = await usersCollection.findOne(query);
+        //     if(user?.role !== 'admin'){
+        //         return res.status(403).send({ error: true, message: 'forbidden message' });
+        //     }
+        //     next();
+        // }
 
         // get all users
         app.get('/users', async(req, res)=>{
@@ -72,7 +72,7 @@ async function run(){
         })
 
         // check user admin or not
-        // app.get('/users/admin/:email', verifyJWT, async(req, res)=>{
+        // app.get('/users/admin/:email', async(req, res)=>{
         //     const email = req.params.email;
         //     if(req.decoded.email !== email){
         //         res.send( {admin: false} )
@@ -87,11 +87,12 @@ async function run(){
         app.patch('/users/admin/:id', async(req, res)=>{
             const id = req.params.id;
             const filter = {_id: new ObjectId(id)}
+            console.log(id)
             const updateDoc = {
                 $set: {
                     role: 'admin'
                 },
-            }
+            };
             const result = await usersCollection.updateOne(filter, updateDoc);
             res.send(result);
         })
