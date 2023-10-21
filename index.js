@@ -58,7 +58,7 @@ async function run(){
         // }
 
         // get all users
-        app.get('/users', async(req, res)=>{
+        app.get('/users', verifyJWT,  async(req, res)=>{
             const result = await usersCollection.find().toArray();
             res.send(result);
         } )
@@ -71,8 +71,16 @@ async function run(){
             res.send(result);
         })
 
+        // delete cart data
+        app.delete('/carts/:id', async(req,res) =>{
+            const id = req.params.id;
+            const query  = { _id: new ObjectId(id) };
+            const result = await cartCollection.deleteOne(query);
+            res.send(result);
+        } )
+
         // check user admin or not
-        // app.get('/users/admin/:email', async(req, res)=>{
+        // app.get('/users/admin/:email',  async(req, res)=>{
         //     const email = req.params.email;
         //     if(req.decoded.email !== email){
         //         res.send( {admin: false} )
@@ -125,7 +133,6 @@ async function run(){
                 res.send([]);
             }
 
-            // email wise cart er data get kortechi
             const query = { email: email };
             const result = await cartCollection.find(query).toArray();
             res.send(result);
