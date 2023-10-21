@@ -47,18 +47,18 @@ async function run(){
         const usersCollection = client.db('Laptop-Land').collection('users');
 
         // verify admin
-        // const verifyAdmin = async (req, res, next) =>{
-        //     const email = req.decoded.email;
-        //     const query = { email: email };
-        //     const user = await usersCollection.findOne(query);
-        //     if(user?.role !== 'admin'){
-        //         return res.status(403).send({ error: true, message: 'forbidden message' });
-        //     }
-        //     next();
-        // }
+        const verifyAdmin = async (req, res, next) =>{
+            const email = req.decoded.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            if(user?.role !== 'admin'){
+                return res.status(403).send({ error: true, message: 'forbidden message' });
+            }
+            next();
+        }
 
         // get all users
-        app.get('/users', verifyJWT,  async(req, res)=>{
+        app.get('/users', verifyJWT, verifyAdmin, async(req, res)=>{
             const result = await usersCollection.find().toArray();
             res.send(result);
         } )
@@ -80,16 +80,16 @@ async function run(){
         } )
 
         // check user admin or not
-        // app.get('/users/admin/:email',  async(req, res)=>{
-        //     const email = req.params.email;
-        //     if(req.decoded.email !== email){
-        //         res.send( {admin: false} )
-        //     }
-        //     const query = {email : email}
-        //     const user = await usersCollection.findOne(query);
-        //     const result = {admin: user?.role === 'admin'}
-        //     res.send(result);
-        // } )
+        app.get('/users/admin/:email', verifyJWT,  async(req, res)=>{
+            const email = req.params.email;
+            if(req.decoded.email !== email){
+                res.send( {admin: false} )
+            }
+            const query = {email : email}
+            const user = await usersCollection.findOne(query);
+            const result = {admin: user?.role === 'admin'}
+            res.send(result);
+        } )
 
         // make admin
         app.patch('/users/admin/:id', async(req, res)=>{
@@ -127,10 +127,15 @@ async function run(){
         })
 
         // get cart data email wise
-        app.get('/carts', async(req, res)=>{
+        app.get('/carts', verifyJWT, async(req, res)=>{
             const email = req.query.email;
             if(!email){
                 res.send([]);
+            }
+
+            const decodedEmail = req.decoded.email;
+            if (email !== decodedEmail) {
+                return res.status(403).send({ error: true, message: 'forbidden access' })
             }
 
             const query = { email: email };
