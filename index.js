@@ -87,6 +87,39 @@ async function run(){
             res.send(result);
         })
 
+        // update laptop
+        app.put('/laptop/:id', async(req, res)=>{
+            const id = req.params.id;
+            const updatedLaptop = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = {upsert: true};
+            const updateDoc = {
+                $set:{
+                    code: updatedLaptop.code,
+                    model: updatedLaptop.model,
+                    brand: updatedLaptop.brand,
+                    price: updatedLaptop.price,
+                    processor: updatedLaptop.processor,
+                    ram: updatedLaptop.ram,
+                    ramtype: updatedLaptop.ramtype,
+                    display: updatedLaptop.display,
+                    storagecapacity: updatedLaptop.storagecapacity,
+                    graphics: updatedLaptop.graphics,
+                    keyboard: updatedLaptop.keyboard,
+                    camera: updatedLaptop.camera,
+                    speaker: updatedLaptop.speaker,
+                    audio: updatedLaptop.audio,
+                    network: updatedLaptop.network,
+                    os: updatedLaptop.os,
+                    weight: updatedLaptop.weight,
+                    warranty: updatedLaptop.warranty,
+                    description: updatedLaptop.description
+                },
+            };
+            const result = await laptopCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
+
         // check user admin or not
         app.get('/users/admin/:email', verifyJWT,  async(req, res)=>{
             const email = req.params.email;
