@@ -182,6 +182,25 @@ async function run(){
             res.send(result);
         })
 
+        //**** */ get all cart data
+        app.get('/carts', verifyJWT, verifyAdmin, async(req, res)=>{
+            const result = await cartCollection.find().toArray();
+            res.send(result);
+        })
+
+        //************* product deliver status
+        app.patch('/carts/delivered/:id', async(req,res)=>{
+            const id= req.params.id;
+            const filter = {_id: new ObjectId(id)}
+            const updateDoc = {
+                $set:{
+                    status: 'delivered'
+                },
+            }
+            const result = await cartCollection.updateOne(filter , updateDoc);
+            res.send(result);
+        })
+
         // create jwt token.
         app.post('/jwt', (req,res)=>{
             const user = req.body;
