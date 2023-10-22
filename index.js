@@ -79,6 +79,14 @@ async function run(){
             res.send(result);
         } )
 
+        // laptop delete
+        app.delete('/laptop/:id',  verifyJWT, verifyAdmin, async(req, res)=>{
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await laptopCollection.deleteOne(query);
+            res.send(result);
+        })
+
         // check user admin or not
         app.get('/users/admin/:email', verifyJWT,  async(req, res)=>{
             const email = req.params.email;
