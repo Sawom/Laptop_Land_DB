@@ -132,12 +132,10 @@ async function run(){
             if(!email){
                 res.send([]);
             }
-
             const decodedEmail = req.decoded.email;
             if (email !== decodedEmail) {
                 return res.status(403).send({ error: true, message: 'forbidden access' })
             }
-
             const query = { email: email };
             const result = await cartCollection.find(query).toArray();
             res.send(result);
