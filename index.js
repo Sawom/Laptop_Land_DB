@@ -87,6 +87,13 @@ async function run(){
             res.send(result);
         })
 
+        // add laptop
+        app.post('/laptop', async(req, res)=>{
+            const newLaptop = req.body;
+            const result = await laptopCollection.insertOne(newLaptop);
+            res.send(result);
+        } )
+
         // update laptop
         app.put('/laptop/:id', async(req, res)=>{
             const id = req.params.id;
