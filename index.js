@@ -88,7 +88,7 @@ async function run(){
         })
 
         // add laptop
-        app.post('/laptop', async(req, res)=>{
+        app.post('/laptop', verifyJWT, verifyAdmin, async(req, res)=>{
             const newLaptop = req.body;
             const result = await laptopCollection.insertOne(newLaptop);
             res.send(result);
