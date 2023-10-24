@@ -239,12 +239,24 @@ async function run(){
             res.send(result);
         })
 
-        // search
+        // search laptops
         app.get('/search/:name', async(req, res)=>{
             let result = await laptopCollection.find({
                 "$or":[
                     {model: { $regex: req.params.name, $options: 'i'}},
                     {brand: { $regex: req.params.name, $options: 'i' }}
+                ]
+            }).toArray()
+            console.log(result)
+            res.send(result)
+        })
+
+        // search reviews
+        app.get('/search/:name', async(req, res)=>{
+            let result = await reviewsCollection.find({
+                "$or":[
+                    {productcode: { $regex: req.params.name, $options: 'i'}},
+                    {model: { $regex: req.params.name, $options: 'i'}}
                 ]
             }).toArray()
             console.log(result)
