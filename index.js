@@ -94,6 +94,13 @@ async function run(){
             res.send(result);
         } )
 
+        // add reviews
+        app.post('/homereview', async(req,res)=>{
+            const newReview = req.body;
+            const result = await reviewsCollection.insertOne(newReview);
+            res.send(result);
+        })
+
         // update laptop
         app.put('/laptop/:id', async(req, res)=>{
             const id = req.params.id;
