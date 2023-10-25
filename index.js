@@ -87,6 +87,14 @@ async function run(){
             res.send(result);
         })
 
+        // review delete
+        app.delete('/homereview/:id', verifyJWT, verifyAdmin, async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await reviewsCollection.deleteOne(query);
+            res.send(result);
+        } )
+
         // add laptop
         app.post('/laptop', verifyJWT, verifyAdmin, async(req, res)=>{
             const newLaptop = req.body;
@@ -255,7 +263,6 @@ async function run(){
         app.get('/search/:name', async(req, res)=>{
             let result = await reviewsCollection.find({
                 "$or":[
-                    {productcode: { $regex: req.params.name, $options: 'i'}},
                     {model: { $regex: req.params.name, $options: 'i'}}
                 ]
             }).toArray()
