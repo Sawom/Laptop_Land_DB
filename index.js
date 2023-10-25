@@ -45,6 +45,7 @@ async function run(){
         const termsCollection = client.db('Laptop-Land').collection('terms');
         const cartCollection = client.db('Laptop-Land').collection('carts'); 
         const usersCollection = client.db('Laptop-Land').collection('users');
+        const bookingCollection = client.db('Laptop-Land').collection('booking')
 
         // verify admin
         const verifyAdmin = async (req, res, next) =>{
@@ -106,6 +107,13 @@ async function run(){
         app.post('/homereview', async(req,res)=>{
             const newReview = req.body;
             const result = await reviewsCollection.insertOne(newReview);
+            res.send(result);
+        })
+
+        // add booking
+        app.post('/booking', async(req,res)=>{
+            const newBooking = req.body;
+            const result = await bookingCollection.insertOne(newBooking);
             res.send(result);
         })
 
