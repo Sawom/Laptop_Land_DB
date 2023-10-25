@@ -96,6 +96,14 @@ async function run(){
             res.send(result);
         } )
 
+        // booking delete
+        app.delete('/booking/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await bookingCollection.deleteOne(query);
+            res.send(result);
+        })
+
         // add laptop
         app.post('/laptop', verifyJWT, verifyAdmin, async(req, res)=>{
             const newLaptop = req.body;
@@ -209,6 +217,17 @@ async function run(){
             }
             const query = { email: email };
             const result = await cartCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        // get booking data email wise
+        app.get('/booking', async(req,res)=>{
+            const email = req.query.email;
+            if(!email){
+                res.send([]);
+            }
+            const query = { email: email };
+            const result = await bookingCollection.find(query).toArray();
             res.send(result);
         })
 
