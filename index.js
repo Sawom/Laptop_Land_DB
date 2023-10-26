@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config(); 
+const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const app = express();
@@ -45,7 +46,8 @@ async function run(){
         const termsCollection = client.db('Laptop-Land').collection('terms');
         const cartCollection = client.db('Laptop-Land').collection('carts'); 
         const usersCollection = client.db('Laptop-Land').collection('users');
-        const bookingCollection = client.db('Laptop-Land').collection('booking')
+        const bookingCollection = client.db('Laptop-Land').collection('booking');
+        const paymentCollection = client.db('Laptop-Land').collection('payments');
 
         // verify admin
         const verifyAdmin = async (req, res, next) =>{
@@ -203,6 +205,30 @@ async function run(){
             }
             const result = await usersCollection.insertOne(user);
             res.send(result);
+        })
+
+        // payment intent
+        app.post('/create-payment-intent', verifyJWT, async (req, res) => {
+            const { price } = req.body;
+            const amount = parseInt(price * 100);
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: 'bdt',
+                payment_method_types: ['card']
+            });
+
+            res.send({
+                clientSecret: paymentIntent.client_secret
+            })
+        })
+
+        // post payment info
+        app.post('/payments', verifyJWT, async(req,res)=>{
+            const payment = req.body;
+            const insertResult = await paymentCollection.insertOne(payment);
+            const query = { _id: { $in: payment.cartItems.map(id => new ObjectId(id)) } }
+            const deleteResult = await cartCollection.deleteMany(query)
+            res.send({ insertResult, deleteResult });
         })
 
         // get cart data email wise
