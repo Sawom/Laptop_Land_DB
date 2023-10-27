@@ -257,6 +257,17 @@ async function run(){
             res.send(result);
         })
 
+        // get payment data email wise
+        app.get('/payments', async(req,res)=>{
+            const email = req.query.email;
+            if(!email){
+                res.send([]);
+            }
+            const query = { email: email };
+            const result = await paymentCollection.find(query).toArray();
+            res.send(result);
+        })
+
         // create jwt token.
         app.post('/jwt', (req,res)=>{
             const user = req.body;
